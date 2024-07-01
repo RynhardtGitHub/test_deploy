@@ -2,39 +2,40 @@
 <html>
 <head>
   <title>Socket.IO Test</title>
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", (event) => {
-      var socket = io();
-      const messageElement = document.getElementById("message");
-
-      socket.on('initialUpdate', function(data) {
-        console.log('Received initialUpdate:', data);
-
-        messageElement.textContent = data.message; 
-      });
-
-      // Check if DeviceMotionEvent is supported
-      if (window.DeviceMotionEvent) {
-        window.addEventListener('devicemotion', function(event) {
-          var acceleration = event.accelerationIncludingGravity;
-          if (acceleration) {
-            var sensorData = {
-              x: acceleration.x,
-              y: acceleration.y,
-              z: acceleration.z
-            };
-            socket.emit('sensorData', sensorData);
-          }
-        });
-      } else {
-        console.log("DeviceMotionEvent is not supported");
-      }
-    });
-  </script>
 </head>
 <body>
     <h1 id="message">Tester.</h1> </body>
 
+    
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", (event) => {
+        var socket = io();
+        const messageElement = document.getElementById("message");
+  
+        socket.on('initialUpdate', function(data) {
+          console.log('Received initialUpdate:', data);
+  
+          messageElement.textContent = data.message; 
+        });
+  
+        // Check if DeviceMotionEvent is supported
+        if (window.DeviceMotionEvent) {
+          window.addEventListener('devicemotion', function(event) {
+            var acceleration = event.accelerationIncludingGravity;
+            if (acceleration) {
+              var sensorData = {
+                x: acceleration.x,
+                y: acceleration.y,
+                z: acceleration.z
+              };
+              socket.emit('sensorData', sensorData);
+            }
+          });
+        } else {
+          console.log("DeviceMotionEvent is not supported");
+        }
+      });
+    </script>
 </body>
 </html>
