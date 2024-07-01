@@ -7,6 +7,9 @@ const server = http.createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(server);
 
+const cors = require('cors');
+app.use(cors()); 
+
 // Game State
 let ballPosition = { x: 0, y: 0 };
 let ballVelocity = { x: 0, y: 0 };
