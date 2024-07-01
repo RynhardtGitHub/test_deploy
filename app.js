@@ -1,6 +1,6 @@
 const http = require('http');
 // const ipAddress = ''; 
-const port = 8080;
+const port = 80;
 const express = require('express');
 const app = express();
 const server = http.createServer(app);
