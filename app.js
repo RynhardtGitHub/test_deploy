@@ -47,7 +47,7 @@ server.listen(port, () => {
 // Physics Parameters
 const gravity = 0.1;
 const friction = 0.98;
-const forceScaler = 0.1;
+const forceScaler = 1;
 function simulateBallPhysics(ballPosition, ballVelocity, sensorData) {
     // Apply sensor data as scaled forces
     const accelForceX = (sensorData.accelX / 10) * forceScaler;
