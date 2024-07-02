@@ -7,9 +7,9 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 const port = 8080;
 
-// const cors = require('cors');
-// app.use(cors());
-// app.use(express.static(path.join(__dirname, 'public')));
+ const cors = require('cors');
+ app.use(cors());
+ app.use(express.static(path.join(__dirname, 'public')));
 
 // Game State
 const players = {};
@@ -19,8 +19,8 @@ let mapCreated = false;
 let maze;
 
 app.get('/', (req, res) => {
-//   res.sendFile(path.join(__dirname,'public','index.html'));
-    res.sendFile(path.join(__dirname, 'ball_test.html'));
+   res.sendFile(path.join(__dirname,'public','index.html'));
+//    res.sendFile(path.join(__dirname, 'ball_test.html'));
 });
 
 // Socket.IO Handling
