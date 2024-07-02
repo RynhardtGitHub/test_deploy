@@ -28,7 +28,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('sensorData', (data) => {
-    // console.log('Sensor data received by server. ' + data.x + ' ' + data.y + ' ' + data.z);
+    console.log('Sensor data received by server. ' + data.x + ' ' + data.y + ' ' + data.z);
 
     const newBallPosition = simulateBallPhysics(ballPosition, ballVelocity, data);
     io.emit('ballUpdate', newBallPosition);
