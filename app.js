@@ -9,21 +9,24 @@ const port = 8080;
 
 // const cors = require('cors');
 // app.use(cors());
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
 
 // Game State
 const players = {};
 let ballPosition = { x: 0, y: 0 };
 let ballVelocity = { x: 0, y: 0 };
+let mapCreated = false;
+let maze;
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname,'public','index.html'));
+//   res.sendFile(path.join(__dirname,'public','index.html'));
+    res.sendFile(path.join(__dirname, 'ball_test.html'));
 });
 
 // Socket.IO Handling
 io.on('connection', (socket) => {
     const playerId = socket.id; 
-    console.log(`New user connected. Current list: ${playerId}`);
+    console.log(`New user connected. Current player id:: ${playerId}`);
   
     // Initialize player data
     players[playerId] = {
@@ -32,6 +35,8 @@ io.on('connection', (socket) => {
         ballVelocity: { x: 0, y: 0 }
     };
 
+    console.log(`Player count: ${Object.keys(players).length}`);
+
     // Immediately send initial data
     socket.emit('initialUpdate', { 
         message: 'Welcome to the game!',
@@ -39,36 +44,31 @@ io.on('connection', (socket) => {
     });
 
     socket.on('sensorData', (data) => {
-        // console.log('Sensor data received by server. ' + data.x + ' ' + data.y + ' ' + data.z);
-        const updatedBallPosition = simulateBallPhysics(
-            players[playerId].ballPosition,
-            players[playerId].ballVelocity,
-            data
-        );
-    
-        // Update player's position in the players object
-        players[playerId].ballPosition = updatedBallPosition;
-
-        // Notify player of update
-        io.emit("ballUpdate", { 
-            playerId: playerId, 
-            ballPosition: updatedBallPosition 
-        });
+        // players.array.forEach(element => {
+        //     io.emit('ballUpdate', {
+        //         playerId: element,
+        //         ballPosition: updatedBallPosition
+        //     });
+        // });
+        console.log(JSON.stringify(data));
   });
 
   socket.on('sendDifficulty', (difficulty) => {
     console.log('Difficulty received');
 
-    maze = new Maze(difficulty, difficulty);
-    maze ={map:maze.map, endCoord:maze.endCoord, startCoord:maze.startCoord};
-
-    // console.log(maze);
-
-    if (players.length >= 2) {
-        socket.emit('mazeBroadcast', maze);
+    // Don't create map again
+    if (!mapCreated) {
+        maze = new Maze(difficulty, difficulty);
+        maze = {map:maze.map, endCoord:maze.endCoord, startCoord:maze.startCoord};
+        mapCreated = true;
     }
 
+    // console.log(maze);
+    if (Object.keys(players).length >= 2) {
+        socket.emit('mazeBroadcast', maze);
+    }
     console.log('Emitting maze to client.');
+
   });
 
   socket.on('disconnect', () => {
