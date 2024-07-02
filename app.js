@@ -20,24 +20,23 @@ app.get('/', (req, res) => {
 
 // Socket.IO Handling
 io.on('connection', (socket) => {
-  console.log(`New user connected. Current list: ${players[0]}`);
-
-  const playerId = socket.id; 
+    const playerId = socket.id; 
+    console.log(`New user connected. Current list: ${players[0]}`);
   
-  // Initialize player data
-  players[playerId] = {
-    socket: socket, // Reference to socket
-    ballPosition: { x: 0, y: 0 }, // Initial position (adjust)
-    ballVelocity: { x: 0, y: 0 }
-  };
+    // Initialize player data
+    players[playerId] = {
+        socket: socket, // Reference to socket
+        ballPosition: { x: 0, y: 0 }, // Initial position (adjust)
+        ballVelocity: { x: 0, y: 0 }
+    };
 
-  // Immediately send initial data
-  socket.emit('initialUpdate', { 
-    message: 'Welcome to the game!',
-    ballPosition: players[playerId].ballPosition 
-  });
+    // Immediately send initial data
+    socket.emit('initialUpdate', { 
+        message: 'Welcome to the game!',
+        ballPosition: players[playerId].ballPosition 
+    });
 
-  socket.on('sensorData', (data) => {
+    socket.on('sensorData', (data) => {
     // console.log('Sensor data received by server. ' + data.x + ' ' + data.y + ' ' + data.z);
 
     const updatedBallPosition = simulateBallPhysics(
