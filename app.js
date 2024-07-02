@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 // Socket.IO Handling
 io.on('connection', (socket) => {
     const playerId = socket.id; 
-    console.log(`New user connected. Current list: ${players[0]}`);
+    console.log(`New user connected. Current list: ${playerId}`);
   
     // Initialize player data
     players[playerId] = {
