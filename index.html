@@ -1,103 +1,74 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>Ball in hole.</title>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Maze</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div id="page">
+      <div id="Message-Container">
+        <div id="message">
+          <h1>Congratulations!</h1>
+          <p>You are done.</p>
+          <p id="moves"></p>
+          <input
+            id="okBtn"
+            type="button"
+            onclick="toggleVisablity('Message-Container')"
+            value="Cool!"
+          />
+        </div>
+      </div>
 
-  <style>
-    #ball {
-      width: 50px;
-      height: 50px;
-      background-color: red;
-      border-radius: 50%;
-      position: absolute;
-      left: 50%; /* Center horizontally */
-      top: 50%;  /* Center vertically */
-      transform: translate(-50%, -50%); /* Adjust for center origin */
-    }
+      <br />
+      <div id="menu">
+        <div class="custom-select">
+          <select id="diffSelect">
+            <option value="10">Easy</option>
+            <option value="15">Medium</option>
+            <option value="25">Hard</option>
+            <option value="38">Extreme</option>
+          </select>
+        </div>
+        <input
+          id="startMazeBtn"
+          type="button"
+          onclick="makeMaze()"
+          value="Start"
+        />
+      </div>
 
-    #debug {
-      position: fixed;
-      bottom: 10px;
-      left: 10px;
-      background-color: rgba(0, 0, 0, 0.7);
-      color: white;
-      padding: 10px;
-      font-family: monospace;
-    }
-  </style>
-</head>
-<body>
-    <div id="ball"></div>
-    <div id="debug"></div> <div id="debug"></div>
+      <div id="view">
+        <div id="mazeContainer">
+          <canvas
+            id="mazeCanvas"
+            class="border"
+            height="1100"
+            width="1100"
+          ></canvas>
+        </div>
+      </div>
 
-    <!-- <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", (event) => {
-        var socket = io();
-        const ball = document.getElementById("ball");
-        const debugElement = document.getElementById("debug");
-        const balls = {};
+      <p id="instructions">Use arrow keys to move the key to the house!</p>
+      <button id="request">Request Permission</button>
+      Hold the device parallel to the ground. Rotate along its x and y axes to
+      see the ball move up/down and left/right respectively.
+      <pre class="output"></pre>
+    </div>
 
-        socket.on('initialUpdate', function(data) {
-            if (!balls[data.playerId]) {
-                const ball = document.createElement("div");
-                ball.id = `ball_${data.playerId}`;
-                ball.className = "ball"; // Apply ball styles
-                document.body.appendChild(ball);
-                balls[data.playerId] = ball;
-            }
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery.touchswipe/1.6.18/jquery.touchSwipe.min.js"
+    ></script>
 
-            updateBallPosition(balls[data.playerId], data.ballPosition);
-        });
-
-        socket.on("ballUpdate", (data) => {
-            updateBallPosition(balls[data.playerId], data.ballPosition);
-        });
-
-        function updateBallPosition(ballPosition) {
-            ball.style.left = (ballPosition.x - 25) + 'px'; // Adjust for ball's size
-            ball.style.top = (ballPosition.y - 25) + 'px';
-        }
-
-        function logDebugInfo(message, data) {
-            const logEntry = document.createElement('p');
-            logEntry.textContent = `${message} ${JSON.stringify(data)}`;
-            debugElement.appendChild(logEntry);
-        }
-  
-        // Socket throttling
-        let lastEmitTime = 0;
-        const emitInterval = 30; // (ms)
-
-        // Check if DeviceMotionEvent is supported
-        if (window.DeviceMotionEvent) {
-        window.addEventListener('devicemotion', function(event) {
-            const now = Date.now();
-
-            // Check if enough time has passed since the last emit
-            if (now - lastEmitTime > emitInterval) {
-            // Check if accelerationIncludingGravity exists before accessing properties
-                if (event.accelerationIncludingGravity) {
-                    var acceleration = event.accelerationIncludingGravity;
-                    var sensorData = {
-                    x: acceleration.x,
-                    y: acceleration.y,
-                    z: acceleration.z
-                    };
-                    socket.emit('sensorData', sensorData);
-                } else {
-                    console.log("Acceleration data not available yet.");
-                }
-
-                // Update the last emit time
-                lastEmitTime = now; 
-            } // Throttle check
-        });
-        } else {
-        console.log("DeviceMotionEvent is not supported");
-        }
-    });
-    </script>
-</body>
+    <script src="./script.js"></script>
+    <script src="./index.js"></script>
+  </body>
 </html>
