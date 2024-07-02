@@ -66,27 +66,38 @@
             debugElement.appendChild(logEntry);
         }
   
+        // Socket throttling
+        let lastEmitTime = 0;
+        const emitInterval = 30; // (ms)
+
         // Check if DeviceMotionEvent is supported
         if (window.DeviceMotionEvent) {
-            window.addEventListener('devicemotion', function(event) {
-                // Check if accelerationIncludingGravity exists before accessing properties
+        window.addEventListener('devicemotion', function(event) {
+            const now = Date.now();
+
+            // Check if enough time has passed since the last emit
+            if (now - lastEmitTime > emitInterval) {
+            // Check if accelerationIncludingGravity exists before accessing properties
                 if (event.accelerationIncludingGravity) {
-                var acceleration = event.accelerationIncludingGravity;
-                var sensorData = {
+                    var acceleration = event.accelerationIncludingGravity;
+                    var sensorData = {
                     x: acceleration.x,
                     y: acceleration.y,
                     z: acceleration.z
-                };
-                socket.emit('sensorData', sensorData);
+                    };
+                    socket.emit('sensorData', sensorData);
                 } else {
-                // Handle the case where accelerationIncludingGravity is not yet available
-                console.log("Acceleration data not available yet.");
+                    console.log("Acceleration data not available yet.");
                 }
-            });
+
+                // Update the last emit time
+                lastEmitTime = now; 
+            } // Throttle check
+        });
         } else {
-            console.log("DeviceMotionEvent is not supported");
+        console.log("DeviceMotionEvent is not supported");
         }
-      });
+    });
     </script>
 </body>
 </html>
