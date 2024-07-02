@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Socket.IO Test</title>
+  <title>Ball in hole.</title>
 
   <style>
     #ball {
@@ -42,7 +42,8 @@
             logDebugInfo('Received initialUpdate:', data);
             updateBallPosition(data.ballPosition);
             socket.on('ballUpdate', function(ballPosition) {
-            updateBallPosition(ballPosition);
+                updateBallPosition(ballPosition);
+                logDebugInfo(`Ball position updated: ${ballPosition.x}, ${ballPosition.y}`)
             });
         });
 
