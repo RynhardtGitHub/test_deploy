@@ -35,29 +35,45 @@
     <script>
       document.addEventListener("DOMContentLoaded", (event) => {
         var socket = io();
-        const ball = document.getElementById("ball");
         const debugElement = document.getElementById("debug");
+        const balls = {};
 
-        socket.on('initialUpdate', function(data) {
-            if (!balls[data.playerId]) {
-                const ball = document.createElement("div");
-                ball.id = `ball_${data.playerId}`;
-                ball.className = "ball"; // Apply ball styles
-                document.body.appendChild(ball);
-                balls[data.playerId] = ball;
+        socket.on('initialUpdate', (data) => {
+            logDebugInfo('Received initialUpdate:', data);
+            
+            // Create a ball for each player (if not exists) and set position
+            const ballId = `ball_${data.playerId}`;
+            if (!balls[ballId]) {
+                balls[ballId] = createBallElement(ballId);
+                document.body.appendChild(balls[ballId]);
+                balls[ballId].ballPosition = {x: window.innerWidth / 2, y: window.innerHeight / 2};
+                balls[ballId].ballVelocity = {x: 0, y: 0};
             }
 
-            updateBallPosition(balls[data.playerId], data.ballPosition);
+            updateBallPosition(balls[ballId], data.ballPosition);
         });
 
         socket.on("ballUpdate", (data) => {
+            if (balls[data.playerId]) {
             updateBallPosition(balls[data.playerId], data.ballPosition);
+            }
         });
 
-        function updateBallPosition(ballPosition) {
-            ball.style.left = (ballPosition.x - 25) + 'px'; // Adjust for ball's size
-            ball.style.top = (ballPosition.y - 25) + 'px';
+        // Create new ball element with specified id
+        function createBallElement(ballId){
+            const ball = document.createElement("div");
+            ball.id = ballId;
+            ball.className = "ball"; // Apply ball styles
+            return ball;
         }
+    
+        function updateBallPosition(ball, ballPosition) {
+            logDebugInfo('Updating ball position:', ballPosition);
+            const ballRadius = ball.offsetWidth / 2; // Half the ball's width
+            ball.style.left = (ballPosition.x - ballRadius) + 'px';
+            ball.style.top = (ballPosition.y - ballRadius) + 'px';
+        }
+
 
         function logDebugInfo(message, data) {
             const logEntry = document.createElement('p');
@@ -69,28 +85,28 @@
         if (window.DeviceMotionEvent) {
             window.addEventListener('devicemotion', function(event) {
                 if (event.accelerationIncludingGravity) {
-                const acceleration = event.accelerationIncludingGravity;
+                    const acceleration = event.accelerationIncludingGravity;
 
-                // Calculate forces based on acceleration
-                const forceX = acceleration.x * forceScaler;
-                const forceY = acceleration.y * forceScaler;
+                    // Calculate forces based on acceleration
+                    const forceX = acceleration.x * forceScaler;
+                    const forceY = acceleration.y * forceScaler;
 
-                // Update ball velocity based on forces and friction
-                ballVelocity.x += forceX - ballVelocity.x * friction;
-                ballVelocity.y += forceY + gravity - ballVelocity.y * friction;
+                    // Update ball velocity based on forces and friction
+                    ballVelocity.x += forceX - ballVelocity.x * friction;
+                    ballVelocity.y += forceY + gravity - ballVelocity.y * friction;
 
-                // Update ball position based on velocity
-                ballPosition.x += ballVelocity.x;
-                ballPosition.y += ballVelocity.y;
+                    // Update ball position based on velocity
+                    ballPosition.x += ballVelocity.x;
+                    ballPosition.y += ballVelocity.y;
 
-                // Keep the ball within the screen bounds
-                const ballRadius = ball.offsetWidth / 2; // Half the ball's width
-                ballPosition.x = Math.max(ballRadius, Math.min(ballPosition.x, window.innerWidth - ballRadius));
-                ballPosition.y = Math.max(ballRadius, Math.min(ballPosition.y, window.innerHeight - ballRadius));
+                    // Keep the ball within the screen bounds
+                    const ballRadius = ball.offsetWidth / 2; // Half the ball's width
+                    ballPosition.x = Math.max(ballRadius, Math.min(ballPosition.x, window.innerWidth - ballRadius));
+                    ballPosition.y = Math.max(ballRadius, Math.min(ballPosition.y, window.innerHeight - ballRadius));
 
-                // Apply the updated position to the ball element
-                ball.style.left = (ballPosition.x - ballRadius) + 'px'; // Center the ball
-                ball.style.top = (ballPosition.y - ballRadius) + 'px';
+                    // Apply the updated position to the ball element
+                    ball.style.left = (ballPosition.x - ballRadius) + 'px'; // Center the ball
+                    ball.style.top = (ballPosition.y - ballRadius) + 'px';
                 }
             });
         } else {
