@@ -87,26 +87,7 @@
                 if (event.accelerationIncludingGravity) {
                     const acceleration = event.accelerationIncludingGravity;
 
-                    // Calculate forces based on acceleration
-                    const forceX = acceleration.x * forceScaler;
-                    const forceY = acceleration.y * forceScaler;
-
-                    // Update ball velocity based on forces and friction
-                    ballVelocity.x += forceX - ballVelocity.x * friction;
-                    ballVelocity.y += forceY + gravity - ballVelocity.y * friction;
-
-                    // Update ball position based on velocity
-                    ballPosition.x += ballVelocity.x;
-                    ballPosition.y += ballVelocity.y;
-
-                    // Keep the ball within the screen bounds
-                    const ballRadius = ball.offsetWidth / 2; // Half the ball's width
-                    ballPosition.x = Math.max(ballRadius, Math.min(ballPosition.x, window.innerWidth - ballRadius));
-                    ballPosition.y = Math.max(ballRadius, Math.min(ballPosition.y, window.innerHeight - ballRadius));
-
-                    // Apply the updated position to the ball element
-                    ball.style.left = (ballPosition.x - ballRadius) + 'px'; // Center the ball
-                    ball.style.top = (ballPosition.y - ballRadius) + 'px';
+                    socket.emit('sensorData', acceleration);
                 }
             });
         } else {
