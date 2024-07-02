@@ -61,5 +61,6 @@ function simulateBallPhysics(ballPosition, ballVelocity, sensorData) {
     ballPosition.x += ballVelocity.x;
     ballPosition.y += ballVelocity.y;
   
+    console.log(`New ball position; ${ballPosition}`);
     return ballPosition;
 }
