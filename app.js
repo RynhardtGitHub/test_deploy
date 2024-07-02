@@ -37,22 +37,21 @@ io.on('connection', (socket) => {
     });
 
     socket.on('sensorData', (data) => {
-    // console.log('Sensor data received by server. ' + data.x + ' ' + data.y + ' ' + data.z);
+        // console.log('Sensor data received by server. ' + data.x + ' ' + data.y + ' ' + data.z);
+        const updatedBallPosition = simulateBallPhysics(
+            players[playerId].ballPosition,
+            players[playerId].ballVelocity,
+            data
+        );
+    
+        // Update player's position in the players object
+        players[playerId].ballPosition = updatedBallPosition;
 
-    const updatedBallPosition = simulateBallPhysics(
-        players[playerId].ballPosition,
-        players[playerId].ballVelocity,
-        data
-    );
-  
-    // Update player's position in the players object
-    players[playerId].ballPosition = updatedBallPosition;
-
-    // Notify player of update
-    io.emit("ballUpdate", { 
-        playerId: playerId, 
-        ballPosition: updatedBallPosition 
-    });
+        // Notify player of update
+        io.emit("ballUpdate", { 
+            playerId: playerId, 
+            ballPosition: updatedBallPosition 
+        });
   });
 
   socket.on('disconnect', () => {
