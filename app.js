@@ -10,6 +10,7 @@ const cors = require('cors');
 app.use(cors()); 
 
 // Game State
+const players = {};
 let ballPosition = { x: 0, y: 0 };
 let ballVelocity = { x: 0, y: 0 };
 
@@ -21,6 +22,15 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
   console.log('A user connected');
 
+  const playerId = socket.id; 
+  
+  // Initialize player data
+  players[playerId] = {
+    socket: socket, // Reference to socket
+    ballPosition: { x: 0, y: 0 }, // Initial position (adjust)
+    ballVelocity: { x: 0, y: 0 }
+  };
+
   // Immediately send initial data
   socket.emit('initialUpdate', { 
     message: 'Welcome to the game!',
@@ -28,10 +38,22 @@ io.on('connection', (socket) => {
   });
 
   socket.on('sensorData', (data) => {
-    console.log('Sensor data received by server. ' + data.x + ' ' + data.y + ' ' + data.z);
+    // console.log('Sensor data received by server. ' + data.x + ' ' + data.y + ' ' + data.z);
 
-    const newBallPosition = simulateBallPhysics(ballPosition, ballVelocity, data);
-    io.emit('ballUpdate', newBallPosition);
+    const updatedBallPosition = simulateBallPhysics(
+        players[playerId].ballPosition,
+        players[playerId].ballVelocity,
+        sensorData
+    );
+  
+    // Update player's position in the players object
+    players[playerId].ballPosition = updatedBallPosition;
+
+    // Notify player of update
+    io.emit("ballUpdate", { 
+        playerId: playerId, 
+        ballPosition: updatedBallPosition 
+    });
   });
 
   socket.on('disconnect', () => {

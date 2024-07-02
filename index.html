@@ -37,14 +37,22 @@
         var socket = io();
         const ball = document.getElementById("ball");
         const debugElement = document.getElementById("debug");
+        const balls = {};
 
         socket.on('initialUpdate', function(data) {
-            logDebugInfo('Received initialUpdate:', data);
-            updateBallPosition(data.ballPosition);
-            socket.on('ballUpdate', function(ballPosition) {
-                updateBallPosition(ballPosition);
-                logDebugInfo(`Ball position updated: ${ballPosition.x}, ${ballPosition.y}`)
-            });
+            if (!balls[data.playerId]) {
+                const ball = document.createElement("div");
+                ball.id = `ball_${data.playerId}`;
+                ball.className = "ball"; // Apply ball styles
+                document.body.appendChild(ball);
+                balls[data.playerId] = ball;
+            }
+
+            updateBallPosition(balls[data.playerId], data.ballPosition);
+        });
+
+        socket.on("ballUpdate", (data) => {
+            updateBallPosition(balls[data.playerId], data.ballPosition);
         });
 
         function updateBallPosition(ballPosition) {
