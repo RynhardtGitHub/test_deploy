@@ -2,9 +2,22 @@
 <html>
 <head>
   <title>Socket.IO Test</title>
+
+  <style>
+    #ball {
+      width: 50px;
+      height: 50px;
+      background-color: red;
+      border-radius: 50%;
+      position: absolute;
+      left: 50%; /* Center horizontally */
+      top: 50%;  /* Center vertically */
+      transform: translate(-50%, -50%); /* Adjust for center origin */
+    }
+  </style>
 </head>
 <body>
-    <h1 id="message">Tester.</h1> </body>
+    <div id="ball"></div>
 
 
     <!-- <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script> -->
@@ -12,13 +25,21 @@
     <script>
       document.addEventListener("DOMContentLoaded", (event) => {
         var socket = io();
-        const messageElement = document.getElementById("message");
-  
+        const ball = document.getElementById("ball");
+
         socket.on('initialUpdate', function(data) {
-          console.log('Received initialUpdate:', data);
-  
-          messageElement.textContent = data.message; 
+            console.log('Received initialUpdate:', data);
+            updateBallPosition(data.ballPosition); // Initial ball position
         });
+
+        socket.on('ballUpdate', function(ballPosition) {
+            updateBallPosition(ballPosition);
+        });
+
+        function updateBallPosition(ballPosition) {
+            ball.style.left = (ballPosition.x - 25) + 'px'; // Adjust for ball's size
+            ball.style.top = (ballPosition.y - 25) + 'px';
+        }
   
         // Check if DeviceMotionEvent is supported
         if (window.DeviceMotionEvent) {
