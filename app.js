@@ -49,6 +49,8 @@ const gravity = 0.1;
 const friction = 0.98;
 const forceScaler = 1;
 function simulateBallPhysics(ballPosition, ballVelocity, sensorData) {
+    console.log(`Sensor data: ${sensorData.x}, ${sensorData.y}, ${sensorData.z}`)
+
     // Apply sensor data as scaled forces
     const accelForceX = (sensorData.accelX / 10) * forceScaler;
     const accelForceY = (sensorData.accelY / 10) * forceScaler;
