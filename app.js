@@ -49,24 +49,24 @@ const gravity = 0.1;
 const friction = 0.98;
 const forceScaler = 1;
 function simulateBallPhysics(ballPosition, ballVelocity, sensorData) {
-    console.log(`Sensor data: ${sensorData.x}, ${sensorData.y}, ${sensorData.z}`)
-
-    // Apply sensor data as scaled forces
-    const accelForceX = +(sensorData.accelX / 10) * forceScaler;
-    const accelForceY = +(sensorData.accelY / 10) * forceScaler;
-
+    console.log(`Sensor data: ${sensorData.x}, ${sensorData.y}, ${sensorData.z}`);
+  
+    // Use the correct properties from sensorData
+    const accelForceX = (sensorData.x / 10) * forceScaler;
+    const accelForceY = (sensorData.y / 10) * forceScaler;
+  
     console.log(`Accel: ${accelForceX}, ${accelForceY}`);
-
+  
     // Update velocity based on forces and gravity
-    ballVelocity.x += +(accelForceX - (ballVelocity.x * friction));
-    ballVelocity.y += +(accelForceY + gravity - (ballVelocity.y * friction));
+    ballVelocity.x += accelForceX - (ballVelocity.x * friction);
+    ballVelocity.y += accelForceY + gravity - (ballVelocity.y * friction);
   
     console.log(`Velocity: ${ballVelocity.x}, ${ballVelocity.y}`);
-
+  
     // Update position based on velocity
     ballPosition.x += ballVelocity.x;
     ballPosition.y += ballVelocity.y;
   
-    console.log(`New ball position; ${ballPosition.x}, ${ballPosition.y}`);
+    console.log(`New ball position: ${ballPosition.x}, ${ballPosition.y}`);
     return ballPosition;
-}
+  }

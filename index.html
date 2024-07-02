@@ -59,20 +59,31 @@
         }
   
         // Check if DeviceMotionEvent is supported
+        // if (window.DeviceMotionEvent) {
+        //   window.addEventListener('devicemotion', function(event) {
+        //     var acceleration = event.accelerationIncludingGravity;
+        //     if (acceleration) {
+        //       var sensorData = {
+        //         x: acceleration.x,
+        //         y: acceleration.y,
+        //         z: acceleration.z
+        //       };
+        //       socket.emit('sensorData', sensorData);
+        //     }
+        //   });
+        // } else {
+        //   console.log("DeviceMotionEvent is not supported");
+        // }
         if (window.DeviceMotionEvent) {
-          window.addEventListener('devicemotion', function(event) {
-            var acceleration = event.accelerationIncludingGravity;
+        window.addEventListener('devicemotion', function (event) {
+            const acceleration = event.accelerationIncludingGravity;
             if (acceleration) {
-              var sensorData = {
-                x: acceleration.x,
-                y: acceleration.y,
-                z: acceleration.z
-              };
-              socket.emit('sensorData', sensorData);
+            // Send acceleration data directly (no renaming)
+            socket.emit('sensorData', acceleration);
             }
-          });
+        });
         } else {
-          console.log("DeviceMotionEvent is not supported");
+            console.log("DeviceMotionEvent is not supported");
         }
       });
     </script>
