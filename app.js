@@ -43,7 +43,7 @@ io.on('connection', (socket) => {
     const updatedBallPosition = simulateBallPhysics(
         players[playerId].ballPosition,
         players[playerId].ballVelocity,
-        sensorData
+        data
     );
   
     // Update player's position in the players object
