@@ -64,7 +64,9 @@ io.on('connection', (socket) => {
 
     // console.log(maze);
 
-    socket.emit('mazeBroadcast', maze);
+    if (players.length >= 2) {
+        socket.emit('mazeBroadcast', maze);
+    }
 
     console.log('Emitting maze to client.');
   });
