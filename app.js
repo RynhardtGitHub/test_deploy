@@ -28,7 +28,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('sensorData', (data) => {
-    console.log('Sensor data received by server. ' + data.x + ' ' + data.y + ' ' + data.z);
+    // console.log('Sensor data received by server. ' + data.x + ' ' + data.y + ' ' + data.z);
 
     const newBallPosition = simulateBallPhysics(ballPosition, ballVelocity, data);
     io.emit('ballUpdate', newBallPosition);
@@ -50,8 +50,8 @@ const friction = 0.98;
 const forceScaler = 0.1;
 function simulateBallPhysics(ballPosition, ballVelocity, sensorData) {
     // Apply sensor data as scaled forces
-    const accelForceX = sensorData.accelX * forceScaler;
-    const accelForceY = sensorData.accelY * forceScaler;
+    const accelForceX = (sensorData.accelX / 10) * forceScaler;
+    const accelForceY = (sensorData.accelY / 10) * forceScaler;
   
     // Update velocity based on forces and gravity
     ballVelocity.x += accelForceX - (ballVelocity.x * friction);
